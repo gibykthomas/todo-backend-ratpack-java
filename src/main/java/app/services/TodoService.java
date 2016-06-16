@@ -27,7 +27,7 @@ public class TodoService {
     public int add(CreateTodo todo) {
         int newId = atomicInteger.incrementAndGet();
 
-        todos.add(new Todo(newId, todo.title));
+        todos.add(new Todo(newId, todo.title, false));
 
         return newId;
     }

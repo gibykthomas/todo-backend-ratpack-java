@@ -1,6 +1,7 @@
 package app;
 
 import app.models.CreateTodo;
+import app.models.UpdateTodo;
 import app.services.TodoService;
 import ratpack.exec.Blocking;
 import ratpack.handling.Context;
@@ -21,7 +22,7 @@ public class Main {
                 .all(ctx -> {
                     ctx.getResponse().getHeaders()
                         .add("access-control-allow-origin", "*")
-                        .add("access-control-allow-methods", "GET,PUT,POST,DELETE,OPTIONS")
+                        .add("access-control-allow-methods", "GET,PUT,PATCH,POST,DELETE,OPTIONS")
                         .add("access-control-allow-headers", "Content-Type,X-Requested-With");
 
                     ctx.next();
@@ -39,6 +40,15 @@ public class Main {
                                 Blocking
                                     .op(() -> service.delete(id))
                                     .then(() -> ctx.getResponse().status(200).send());
+                            })
+                            .patch(() -> {
+                                ctx.parse(UpdateTodo.class)
+                                    .then(updateTodo -> {
+                                        Blocking
+                                            .op(() -> service.update(id, updateTodo))
+                                            .map(() -> service.find(id))
+                                            .then(todo -> ctx.render(json(todo.withHref(getUrl(ctx)))));
+                                    });
                             })
                         );
                     })

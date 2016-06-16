@@ -2,6 +2,7 @@ package app.services;
 
 import app.models.CreateTodo;
 import app.models.Todo;
+import app.models.UpdateTodo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,23 @@ public class TodoService {
         todos.add(new Todo(newId, todo.title, false));
 
         return newId;
+    }
+
+    public void update(int id, UpdateTodo updateTodo) {
+        todos
+            .stream()
+            .filter(t1 -> t1.id == id)
+            .findFirst()
+            .ifPresent(t -> {
+                todos.remove(t);
+                todos.add(
+                    new Todo(
+                        t.id,
+                        updateTodo.title,
+                        updateTodo.completed
+                    )
+                );
+            });
     }
 
     public void delete(int id) {

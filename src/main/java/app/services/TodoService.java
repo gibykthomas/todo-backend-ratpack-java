@@ -28,7 +28,7 @@ public class TodoService {
     public int add(CreateTodo todo) {
         int newId = atomicInteger.incrementAndGet();
 
-        todos.add(new Todo(newId, todo.title, false));
+        todos.add(new Todo(newId, todo.title, todo.order, false));
 
         return newId;
     }
@@ -44,6 +44,7 @@ public class TodoService {
                     new Todo(
                         t.id,
                         updateTodo.title,
+                        updateTodo.order,
                         updateTodo.completed
                     )
                 );

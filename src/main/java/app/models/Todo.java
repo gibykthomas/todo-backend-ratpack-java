@@ -11,4 +11,8 @@ public class Todo {
         this.title = title;
         this.completed = completed;
     }
+
+    public WithHref<Todo> withHref(String baseUrl) {
+        return new WithHref<>(this, baseUrl + "/" + this.id);
+    }
 }

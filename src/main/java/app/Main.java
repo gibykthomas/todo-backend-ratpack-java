@@ -3,10 +3,13 @@ package app;
 import app.models.CreateTodo;
 import app.services.TodoService;
 import ratpack.exec.Blocking;
+import ratpack.handling.Context;
+import ratpack.server.PublicAddress;
 import ratpack.server.RatpackServer;
 
 import java.util.Collections;
 
+import static java.util.stream.Collectors.toList;
 import static ratpack.jackson.Jackson.json;
 
 public class Main {
@@ -30,7 +33,7 @@ public class Main {
                             .get(() -> {
                                 Blocking
                                     .get(() -> service.find(id))
-                                    .then(todo -> ctx.render(json(todo)));
+                                    .then(todo -> ctx.render(json(todo.withHref(getUrl(ctx)))));
                             })
                             .delete(() -> {
                                 Blocking
@@ -44,7 +47,15 @@ public class Main {
                             .get(() -> {
                                 Blocking
                                     .get(() -> service.findAll())
-                                    .then(todos -> ctx.render(json(todos)));
+                                    .then(todos -> {
+                                        String url = getUrl(ctx);
+                                        ctx.render(json(
+                                            todos
+                                                .stream()
+                                                .map(t -> t.withHref(url))
+                                                .collect(toList())
+                                        ));
+                                    });
                             })
                             .post(() -> {
                                 ctx.parse(CreateTodo.class)
@@ -54,7 +65,7 @@ public class Main {
                                             .then(id -> {
                                                 Blocking
                                                     .get(() -> service.find(id))
-                                                    .then(todo -> ctx.render(json(todo)));
+                                                    .then(todo -> ctx.render(json(todo.withHref(getUrl(ctx)))));
                                             });
                                     });
                             })
@@ -68,5 +79,9 @@ public class Main {
                 )
             )
         );
+    }
+
+    public static String getUrl(Context ctx) {
+        return ctx.get(PublicAddress.class).get() + "/todos";
     }
 }

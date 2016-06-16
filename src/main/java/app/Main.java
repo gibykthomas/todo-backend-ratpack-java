@@ -34,7 +34,13 @@ public class Main {
                             .get(() -> {
                                 Blocking
                                     .get(() -> service.find(id))
-                                    .then(todo -> ctx.render(json(todo.withHref(getUrl(ctx)))));
+                                    .then(todo -> {
+                                        if (todo != null) {
+                                            ctx.render(json(todo.withHref(getUrl(ctx))));
+                                        } else {
+                                            ctx.clientError(404);
+                                        }
+                                    });
                             })
                             .delete(() -> {
                                 Blocking

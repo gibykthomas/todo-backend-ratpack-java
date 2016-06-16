@@ -15,6 +15,14 @@ public class Main {
 
         RatpackServer.start(server -> server
             .handlers(chain -> chain
+                .all(ctx -> {
+                    ctx.getResponse().getHeaders()
+                        .add("access-control-allow-origin", "*")
+                        .add("access-control-allow-methods", "GET,PUT,POST,DELETE,OPTIONS")
+                        .add("access-control-allow-headers", "Content-Type,X-Requested-With");
+
+                    ctx.next();
+                })
                 .prefix("todos", c -> c
                     .path(":id", ctx -> {
                         int id = ctx.getPathTokens().asInt("id");

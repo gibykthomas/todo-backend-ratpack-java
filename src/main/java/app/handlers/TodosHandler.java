@@ -6,10 +6,11 @@ import app.services.TodoService;
 import ratpack.exec.Blocking;
 import ratpack.func.Action;
 import ratpack.handling.Chain;
+import ratpack.handling.Context;
+import ratpack.server.PublicAddress;
 
 import java.util.Collections;
 
-import static app.Main.getUrl;
 import static java.util.stream.Collectors.toList;
 import static ratpack.jackson.Jackson.json;
 
@@ -85,5 +86,9 @@ public class TodosHandler implements Action<Chain> {
                     })
                 )
             );
+    }
+
+    private String getUrl(Context ctx) {
+        return ctx.get(PublicAddress.class).get() + "/todos";
     }
 }

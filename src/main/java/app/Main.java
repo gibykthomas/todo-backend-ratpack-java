@@ -1,5 +1,6 @@
 package app;
 
+import app.handlers.CorsHandler;
 import app.handlers.TodosHandler;
 import ratpack.handling.Context;
 import ratpack.server.PublicAddress;
@@ -10,14 +11,7 @@ public class Main {
 
         RatpackServer.start(server -> server
             .handlers(chain -> chain
-                .all(ctx -> {
-                    ctx.getResponse().getHeaders()
-                        .add("access-control-allow-origin", "*")
-                        .add("access-control-allow-methods", "GET,PUT,PATCH,POST,DELETE,OPTIONS")
-                        .add("access-control-allow-headers", "Content-Type,X-Requested-With");
-
-                    ctx.next();
-                })
+                .all(new CorsHandler())
                 .prefix("todos", new TodosHandler())
             )
         );
